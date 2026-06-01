@@ -293,13 +293,13 @@ function renderHome(){
   var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   document.getElementById('greet-sub').textContent=(profile&&profile.name)?gr+', '+profile.name:gr;
   document.getElementById('resume-area').innerHTML=curDay
-    ?'<div class="resume-bar" onclick="nav('session')"><i class="ti ti-player-play"></i><div><strong>Workout '+curDay+' in progress</strong> — tap to resume</div></div>'
+    ?'<div class="resume-bar" onclick="nav(\'session\')"><i class="ti ti-player-play"></i><div><strong>Workout '+curDay+' in progress</strong> — tap to resume</div></div>'
     :'';
   document.getElementById('day-grid').innerHTML=Object.entries(WO).map(function(e){
     var day=e[0],w=e[1];
     var last=sessions.slice().reverse().find(function(s){ return s.day===day; });
     var lastStr=last?'Last '+new Date(last.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'Not done yet';
-    return '<div class="day-card dc-'+day.toLowerCase()+'" onclick="startWO(''+day+'')">'
+    return '<div class="day-card dc-'+day.toLowerCase()+'" onclick="startWO(\''+day+'\')">'
       +'<div><div class="day-letter">'+day+'</div>'
       +'<div class="day-n">'+w.name.split('—')[0].trim()+'</div>'
       +'<div class="day-f">'+w.focus+'</div></div>'
