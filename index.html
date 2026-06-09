@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Gym Tracker</title>
+<title>RYLLA</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
 :root{--bg:#0a0a0a;--s1:#161618;--s2:#222224;--s3:#2c2c2e;--ac:#3b82f6;--acd:rgba(59,130,246,.14);--ok:#22c55e;--okd:rgba(34,197,94,.14);--t1:#f0f0f0;--t2:#888;--t3:#444;--bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13)}
@@ -200,6 +203,16 @@ html,body{background:var(--bg);color:var(--t1);font-family:system-ui,-apple-syst
         <div><label>Weight kg</label><input id="s-weight" type="number" placeholder="72" step="0.5"></div>
         <div><label>Height cm</label><input id="s-height" type="number" placeholder="186"></div>
       </div>
+      <div class="field-wrap">
+
+        <label>Anthropic API key (for AI coach)</label>
+
+        <input id="s-apikey" type="password" placeholder="sk-ant-..." autocomplete="off">
+
+        <div style="font-size:12px;color:var(--t2);margin-top:6px">Stored only on this phone, never shared. Create one at console.anthropic.com. The AI coach and session debrief need this to work.</div>
+
+      </div>
+
       <button class="save-btn" onclick="saveSettings()">Save</button>
     </div>
   </div>
@@ -243,16 +256,17 @@ const WO={
     {n:"Standing Tib Raise",s:3,lo:15,hi:20}
   ]}
 };
-const SWAPS={"Barbell Bench Press":["Dumbbell Bench Press","Machine Chest Press","Close-Grip Bench Press"],"Overhead Press":["Dumbbell Shoulder Press","Machine Shoulder Press","Arnold Press"],"Neutral Grip Machine Row":["Cable Row","Barbell Row","Dumbbell Row"],"Neutral Grip Machine-Assisted Pull-Up":["Lat Pulldown","Band-Assisted Pull-Up","Straight-Arm Pulldown"],"Pec Deck Fly":["Cable Fly","Dumbbell Fly","Incline DB Fly"],"Standing Dumbbell Lateral Raise":["Cable Lateral Raise","Machine Lateral Raise","DB Front Raise"],"Rear Delt Fly":["Face Pulls","Cable Rear Delt Fly","Reverse Pec Deck"],"Barbell Shrugs":["Dumbbell Shrugs","Machine Shrugs","Trap Bar Shrugs"],"Barbell Biceps Curl":["Dumbbell Curl","Cable Curl","EZ Bar Curl"],"Pin-Loaded Machine Preacher Curl":["Concentration Curl","Cable Curl","Spider Curl"],"Overhead Tricep Extension":["Skull Crusher","Cable Overhead Extension","EZ Bar Extension"],"Cable Straight Bar Triceps Pushdown":["Rope Pushdown","Close-Grip Bench","Bench Dip"],"Behind-The-Back Barbell Wrist Curl":["Dumbbell Wrist Curl","Cable Wrist Curl","Hammer Curl"],"45° Leg Press":["Hack Squat","Goblet Squat","Bulgarian Split Squat"],"Romanian Deadlift":["Stiff-Leg Deadlift","Good Morning","Cable Pull-Through"],"Seated Hamstring Curl":["Lying Hamstring Curl","Nordic Curl","Cable Leg Curl"],"Leg Extension":["Step-Ups","Terminal Knee Extension","Sissy Squat"],"Standing Machine Calf Raise":["Seated Calf Raise","Donkey Calf Raise","Single-Leg Calf Raise"],"Roman Chair Back Extension":["Good Morning","Hyperextension","45° Back Extension"],"Decline Sit-Up":["Cable Crunch","Hanging Knee Raise","Ab Wheel Rollout"],"Standing Tib Raise":["Resistance Band Tib Raise","Tibialis Machine","Seated Tib Raise"],"Plate-Loaded Machine Shoulder Press":["Dumbbell Shoulder Press","Barbell Overhead Press","Cable Shoulder Press"],"Cable or Machine Row":["Barbell Row","Dumbbell Row","T-Bar Row"],"Lat Pulldown":["Machine Pull-Up","Straight-Arm Pulldown","Cable Pulldown"],"Seated Machine Triceps Dip":["Tricep Pushdown","Skull Crusher","Close-Grip Bench"],"Face Pulls":["Rear Delt Fly","Band Pull-Apart","Reverse Pec Deck"],"Seated Machine Hip Abduction":["Cable Hip Abduction","Band Walk","Side-Lying Hip Abduction"],"Captain's Chair Knee Raise":["Hanging Knee Raise","Cable Crunch","Ab Wheel Rollout"]};
+const SWAPS={"Barbell Bench Press":["Dumbbell Bench Press","Machine Chest Press","Close-Grip Bench Press","Incline Barbell Press","Incline Dumbbell Press","Smith Machine Bench Press","Weighted Dip"],"Overhead Press":["Dumbbell Shoulder Press","Machine Shoulder Press","Arnold Press","Seated Barbell Press","Landmine Press","Cable Shoulder Press"],"Neutral Grip Machine Row":["Cable Row","Barbell Row","Dumbbell Row","T-Bar Row","Chest-Supported Row","Seal Row"],"Neutral Grip Machine-Assisted Pull-Up":["Lat Pulldown","Band-Assisted Pull-Up","Straight-Arm Pulldown","Chin-Up","Neutral Grip Pulldown","Inverted Row"],"Pec Deck Fly":["Cable Fly","Dumbbell Fly","Incline DB Fly","Low-to-High Cable Fly","Machine Fly","Deficit Push-Up"],"Standing Dumbbell Lateral Raise":["Cable Lateral Raise","Machine Lateral Raise","DB Front Raise","Lean-In Cable Lateral Raise","Seated Lateral Raise","Upright Row"],"Rear Delt Fly":["Face Pulls","Cable Rear Delt Fly","Reverse Pec Deck","Bent-Over DB Rear Fly","Band Pull-Apart"],"Barbell Shrugs":["Dumbbell Shrugs","Machine Shrugs","Trap Bar Shrugs","Cable Shrugs","Smith Machine Shrugs"],"Barbell Biceps Curl":["Dumbbell Curl","Cable Curl","EZ Bar Curl","Hammer Curl","Incline Dumbbell Curl","Preacher Curl"],"Pin-Loaded Machine Preacher Curl":["Concentration Curl","Cable Curl","Spider Curl","EZ Bar Preacher Curl","Bayesian Cable Curl","Hammer Curl"],"Overhead Tricep Extension":["Skull Crusher","Cable Overhead Extension","EZ Bar Extension","Rope Overhead Extension","Dumbbell Skull Crusher","JM Press"],"Cable Straight Bar Triceps Pushdown":["Rope Pushdown","Close-Grip Bench","Bench Dip","V-Bar Pushdown","Single-Arm Pushdown","Machine Triceps Extension"],"Behind-The-Back Barbell Wrist Curl":["Dumbbell Wrist Curl","Cable Wrist Curl","Hammer Curl","Reverse Wrist Curl","Farmer's Hold","Plate Pinch"],"45° Leg Press":["Hack Squat","Goblet Squat","Bulgarian Split Squat","Barbell Back Squat","Smith Machine Squat","Pendulum Squat","Front Squat"],"Romanian Deadlift":["Stiff-Leg Deadlift","Good Morning","Cable Pull-Through","Dumbbell RDL","Conventional Deadlift","Hip Thrust"],"Seated Hamstring Curl":["Lying Hamstring Curl","Nordic Curl","Cable Leg Curl","Single-Leg Hamstring Curl","Glute Ham Raise","Slider Leg Curl"],"Leg Extension":["Step-Ups","Terminal Knee Extension","Sissy Squat","Single-Leg Extension","Reverse Nordic","Walking Lunge"],"Standing Machine Calf Raise":["Seated Calf Raise","Donkey Calf Raise","Single-Leg Calf Raise","Leg Press Calf Raise","Smith Machine Calf Raise"],"Roman Chair Back Extension":["Good Morning","Hyperextension","45° Back Extension","Reverse Hyperextension","Cable Pull-Through"],"Decline Sit-Up":["Cable Crunch","Hanging Knee Raise","Ab Wheel Rollout","Machine Crunch","Weighted Crunch","V-Up"],"Standing Tib Raise":["Resistance Band Tib Raise","Tibialis Machine","Seated Tib Raise","Heel Walk"],"Plate-Loaded Machine Shoulder Press":["Dumbbell Shoulder Press","Barbell Overhead Press","Cable Shoulder Press","Arnold Press","Smith Machine Shoulder Press","Seated Dumbbell Press"],"Cable or Machine Row":["Barbell Row","Dumbbell Row","T-Bar Row","Chest-Supported Row","Seal Row","Meadows Row"],"Lat Pulldown":["Machine Pull-Up","Straight-Arm Pulldown","Cable Pulldown","Wide-Grip Pulldown","Single-Arm Pulldown","Pull-Up"],"Seated Machine Triceps Dip":["Tricep Pushdown","Skull Crusher","Close-Grip Bench","Bench Dip","Assisted Dip","Rope Pushdown"],"Face Pulls":["Rear Delt Fly","Band Pull-Apart","Reverse Pec Deck","Cable Rear Delt Fly","High Cable Row"],"Seated Machine Hip Abduction":["Cable Hip Abduction","Band Walk","Side-Lying Hip Abduction","Cable Kickback","Sumo Squat","Lateral Lunge"],"Captain's Chair Knee Raise":["Hanging Knee Raise","Cable Crunch","Ab Wheel Rollout","Hanging Leg Raise","Machine Crunch","V-Up"]};
 const INC={"Barbell Bench Press":2.5,"Overhead Press":2.5,"Neutral Grip Machine Row":2.5,"Romanian Deadlift":2.5,"45° Leg Press":5,"Plate-Loaded Machine Shoulder Press":2.5,"Cable or Machine Row":2.5,"Lat Pulldown":2.5,"Barbell Shrugs":2.5,"Neutral Grip Machine-Assisted Pull-Up":2.5};
 const inc=n=>INC[n]||1.25;
 const EX_MUSCLES={"Barbell Bench Press":["chest","front_delt","triceps"],"Overhead Press":["front_delt","side_delt","triceps"],"Neutral Grip Machine Row":["lats","mid_back","biceps"],"Neutral Grip Machine-Assisted Pull-Up":["lats","biceps"],"Pec Deck Fly":["chest"],"Standing Dumbbell Lateral Raise":["side_delt"],"Rear Delt Fly":["rear_delt","mid_back"],"Barbell Shrugs":["traps"],"Barbell Biceps Curl":["biceps"],"Pin-Loaded Machine Preacher Curl":["biceps"],"Overhead Tricep Extension":["triceps"],"Cable Straight Bar Triceps Pushdown":["triceps"],"Behind-The-Back Barbell Wrist Curl":["forearms"],"45° Leg Press":["quads","glutes"],"Romanian Deadlift":["hamstrings","glutes","lower_back"],"Seated Hamstring Curl":["hamstrings"],"Leg Extension":["quads"],"Standing Machine Calf Raise":["calves"],"Roman Chair Back Extension":["lower_back","glutes"],"Decline Sit-Up":["abs"],"Standing Tib Raise":["calves"],"Plate-Loaded Machine Shoulder Press":["front_delt","side_delt","triceps"],"Cable or Machine Row":["lats","mid_back","biceps"],"Lat Pulldown":["lats","biceps"],"Seated Machine Triceps Dip":["triceps"],"Face Pulls":["rear_delt","mid_back"],"Seated Machine Hip Abduction":["glutes"],"Captain's Chair Knee Raise":["abs"]};
 // ── STORAGE (localStorage) ─────────────────────────────────────────────────────
-var sessions=[], profile=null, curDay=null, sd={}, chatH=[], hChart=null, _bw=null;
+var sessions=[], profile=null, curDay=null, sd={}, chatH=[], hChart=null, _bw=null, apiKey='';
 var tim={r:false,s:0,iv:null,pre:90};
 function loadData(){
   try{ var s=localStorage.getItem('rylla_sessions'); if(s) sessions=JSON.parse(s); }catch(e){ sessions=[]; }
   try{ var p=localStorage.getItem('rylla_profile'); if(p) profile=JSON.parse(p); }catch(e){ profile=null; }
+  try{ var k=localStorage.getItem('rylla_key'); if(k) apiKey=k; }catch(e){ apiKey=''; }
 }
 function saveSessions(){ try{ localStorage.setItem('rylla_sessions',JSON.stringify(sessions)); }catch(e){} }
 function saveProfile(){ try{ localStorage.setItem('rylla_profile',JSON.stringify(profile)); }catch(e){} }
@@ -264,6 +278,8 @@ function saveSettings(){
   if(!name) return;
   profile={name:name, age:age||16, weight:weight||72, height:height||175};
   saveProfile();
+  apiKey=document.getElementById('s-apikey').value.trim();
+  try{ if(apiKey) localStorage.setItem('rylla_key',apiKey); else localStorage.removeItem('rylla_key'); }catch(e){}
   nav('home');
 }
 // ── NAV ────────────────────────────────────────────────────────────────────────
@@ -285,6 +301,7 @@ function nav(id){
       document.getElementById('s-weight').value=profile.weight||'';
       document.getElementById('s-height').value=profile.height||'';
     }
+    document.getElementById('s-apikey').value=apiKey||'';
   }
 }
 // ── HOME ───────────────────────────────────────────────────────────────────────
@@ -364,8 +381,8 @@ function renderExList(){
       var rirBtns=[0,1,2,3,4,5].map(function(v){ return '<button class="ropt'+(s.rir===v?' on':'')+'" onclick="setRIR('+ex.i+','+si+','+v+')">'+(v===5?'5+':v)+'</button>'; }).join('');
       return '<div class="set-row">'
         +'<div class="snum">'+(si+1)+'</div>'
-        +'<input class="sin" type="number" placeholder="kg" value="'+(s.w||'')+'" step="0.5" oninput="updS('+ex.i+','+si+','w',this.value)">'
-        +'<input class="sin" type="number" placeholder="reps" value="'+(s.r||'')+'" min="0" oninput="updS('+ex.i+','+si+','r',this.value)">'
+        +'<input class="sin" type="number" placeholder="kg" value="'+(s.w||'')+'" step="0.5" oninput="updS('+ex.i+','+si+',\'w\',this.value)">'
+        +'<input class="sin" type="number" placeholder="reps" value="'+(s.r||'')+'" min="0" oninput="updS('+ex.i+','+si+',\'r\',this.value)">'
         +'<button class="chk'+(s.done?' on':'')+'" onclick="doneS('+ex.i+','+si+')"><i class="ti ti-check"></i></button>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;padding:2px 0 8px 36px">'
@@ -496,8 +513,11 @@ function buildSys(){
   var hist=sessions.slice(-12).map(function(s){ var ex=Object.entries(s.sets).map(function(e){ var v=e[1].filter(function(s){ return s.w&&s.r; }); return v.length?e[0]+': '+v.map(function(s){ return s.w+'kg×'+s.r; }).join(', '):null; }).filter(Boolean).join('; '); return '['+new Date(s.date).toLocaleDateString('en-GB')+' Workout '+s.day+'] '+ex; }).join('\n')||'No sessions yet.';
   return 'You are an expert strength coach for '+p.name+'. They are '+p.age+' years old, '+p.weight+'kg, '+p.height+'cm. Goal: look big and muscular — Superman/woodsman physique. A/B/C/D 4-day split, linear progression.\n\n'+p.name+"'s recent sessions:\n"+hist+'\n\nBe direct and specific to their numbers. Answer in Danish if they write Danish, otherwise English.';
 }
+function aiHeaders(){ return {'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}; }
+
 async function sendMsg(){
   var inp=document.getElementById('cin'),msg=inp.value.trim(); if(!msg) return;
+  if(!apiKey){ var b0=document.getElementById('chat-box'); b0.innerHTML+='<div class="msg a">No API key set. Go to Settings (gear icon on Home) and add your Anthropic API key first.</div>'; b0.scrollTop=b0.scrollHeight; return; }
   inp.value=''; document.getElementById('sbtn').disabled=true;
   chatH.push({role:'user',content:msg});
   var box=document.getElementById('chat-box');
@@ -506,9 +526,9 @@ async function sendMsg(){
   box.innerHTML+='<div class="typing" id="'+tid+'"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   box.scrollTop=box.scrollHeight;
   try{
-    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:chatH})});
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:aiHeaders(),body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:buildSys(),messages:chatH})});
     var data=await res.json();
-    var reply=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:'Something went wrong.';
+    var reply=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:(data.error&&data.error.message?'API error: '+data.error.message:'Something went wrong.');
     chatH.push({role:'assistant',content:reply});
     var t=document.getElementById(tid); if(t) t.remove();
     box.innerHTML+='<div class="msg a">'+reply+'</div>';
@@ -525,11 +545,12 @@ async function showDebrief(session){
   document.getElementById('scroll').scrollTop=0;
   document.getElementById('debrief-wo').textContent='Workout '+session.day+' — '+WO[session.day].name.split('—')[0].trim();
   var body=document.getElementById('debrief-body');
+  if(!apiKey){ body.textContent='Session saved \u2713\n\nAdd an Anthropic API key in Settings to get AI debriefs after each workout.'; return; }
   body.innerHTML='<div style="display:flex;gap:4px"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   try{
     var p=profile||{name:'the athlete',age:16,weight:72};
     var summary=Object.entries(session.sets).map(function(e){ var v=e[1].filter(function(s){ return s.w&&s.r; }); if(!v.length) return null; var rirs=v.map(function(s){ return s.rir; }).filter(function(r){ return r!=null; }); return e[0]+': '+v.map(function(s){ return s.w+'kg×'+s.r; }).join(', ')+(rirs.length?' (avg RIR '+(rirs.reduce(function(a,b){ return a+b; },0)/rirs.length).toFixed(1)+')':''); }).filter(Boolean).join('\n');
-    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:'Strength coach giving a brief post-workout debrief to '+p.name+', age '+p.age+', '+p.weight+'kg. Max 80 words. 1 thing well, 1 to improve. Be specific to the numbers. Danish or English.',messages:[{role:'user',content:'Workout '+session.day+':\n'+summary}]})});
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:aiHeaders(),body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,system:'Strength coach giving a brief post-workout debrief to '+p.name+', age '+p.age+', '+p.weight+'kg. Max 80 words. 1 thing well, 1 to improve. Be specific to the numbers. Danish or English.',messages:[{role:'user',content:'Workout '+session.day+':\n'+summary}]})});
     var data=await res.json();
     body.textContent=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:'Great session — keep pushing!';
   }catch(e){ body.textContent='Could not load debrief. Great session though!'; }
